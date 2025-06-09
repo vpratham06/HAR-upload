@@ -1,78 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>HAR Upload</title>
+  <title>HAR File Upload</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #121212;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+      text-align: center;
+      padding: 100px;
+      background-color: #f4f4f4;
     }
-    #passwordPrompt, #uploadForm {
+    #uploadForm {
       display: none;
-      flex-direction: column;
-      gap: 10px;
-      background: #1e1e1e;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      margin-top: 30px;
     }
-    input[type="password"], input[type="text"], input[type="file"] {
-      padding: 8px;
-      border-radius: 5px;
-      border: none;
-    }
-    button {
-      padding: 8px 12px;
-      border: none;
-      background-color: #4CAF50;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #passwordPrompt {
-      display: flex;
+    #error {
+      color: red;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-
-  <div id="passwordPrompt">
-    <h2>Enter password</h2>
-    <input type="password" id="passwordInput" placeholder="Password" />
-    <button onclick="checkPassword()">Submit</button>
-    <p id="errorMsg" style="color: red;"></p>
-  </div>
+  <h1>Enter Password</h1>
+  <input type="password" id="passwordInput" placeholder="Enter password" />
+  <button onclick="checkPassword()">Submit</button>
+  <div id="error"></div>
 
   <div id="uploadForm">
     <h2>Upload HAR File</h2>
-    <form id="harForm" enctype="multipart/form-data" method="POST" action="YOUR_UPLOAD_ENDPOINT">
-      <input type="text" name="username" placeholder="Roblox Username" required />
-      <input type="file" name="harfile" accept=".har" required />
+    <form action="#" method="POST" enctype="multipart/form-data">
+      <input type="text" placeholder="Roblox username" name="username" required><br><br>
+      <input type="file" name="harfile" accept=".har" required><br><br>
       <button type="submit">Upload</button>
     </form>
   </div>
 
   <script>
-    const correctPassword = "EchoTrails2025";
-
     function checkPassword() {
       const input = document.getElementById("passwordInput").value;
-      const error = document.getElementById("errorMsg");
+      const form = document.getElementById("uploadForm");
+      const error = document.getElementById("error");
 
-      if (input === correctPassword) {
-        document.getElementById("passwordPrompt").style.display = "none";
-        document.getElementById("uploadForm").style.display = "flex";
+      if (input === "EchoTrails2025") {
+        form.style.display = "block";
+        error.innerText = "";
       } else {
-        error.textContent = "Incorrect password. Try again.";
+        form.style.display = "none";
+        error.innerText = "❌ Incorrect password. Try again.";
       }
     }
   </script>
-
 </body>
 </html>
